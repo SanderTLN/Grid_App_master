@@ -12,18 +12,22 @@ namespace Grid_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class KrestikiNoliki : ContentPage
     {
+        Label[,] KresNoli = new Label[3, 3];
+        string l;
         public KrestikiNoliki()
         {
             Reset();
+            stps = 0;
         }
-        BoxView box;
-        Label stat;
+        Label stat, info;
         Button newGame, randomPlayer;
+
         void Reset()
         {
             Grid grid = new Grid();
-            for (int g = 0; g < 4; g++)
+            for (int g = 0; g < 3; g++)
             {
+                BackgroundColor = Color.LightGray;
                 grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             }
             for (int f = 0; f < 3; f++)
@@ -32,14 +36,26 @@ namespace Grid_App
             }
             randomPlayer = new Button
             {
-                Text = "Change X/0"
+                BackgroundColor = Color.BurlyWood,
+                BorderWidth = 2,
+                BorderColor = Color.Gray,
+                Text = "Who's First?"
             };
-            randomPlayer.Clicked += RandomPlayer_Clicked;
+            randomPlayer.Clicked += randomPlayer_Clicked;
             newGame = new Button
             {
+                BackgroundColor = Color.BurlyWood,
+                BorderWidth = 2,
+                BorderColor = Color.Gray,
                 Text = "New Game"
             };
-            newGame.Clicked += NewGame_Clicked;
+            newGame.Clicked += newGame_Clicked;
+            info = new Label
+            {
+                FontSize = 30,
+                TextColor = Color.Gray,
+                Text = ""
+            };
 
             for (int i = 0; i < 3; i++)
             {
@@ -47,12 +63,15 @@ namespace Grid_App
                 {
                     stat = new Label
                     {
-                        BackgroundColor = Color.Gray,
-                        FontSize = 30,
+                        BackgroundColor = Color.LightGray,
+                        FontSize = 120,
                         Text = "",
-                        TextColor = Color.Black,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        TextColor = Color.Gray,
                         VerticalTextAlignment = TextAlignment.Center,
                     };
+                    KresNoli[i, j] = stat;
+                    l = "X";
                     var tap = new TapGestureRecognizer();
                     tap.Tapped += Tap_Tapped;
                     grid.Children.Add(stat, i, j);
@@ -60,62 +79,142 @@ namespace Grid_App
                 }
             }
             grid.Children.Add(randomPlayer, 0, 3);
-            grid.Children.Add(newGame, 3, 3);
+            grid.Children.Add(newGame, 2, 3);
+            grid.Children.Add(info, 1, 3);
             Content = grid;
         }
-
-        private void NewGame_Clicked(object sender, EventArgs e)
+        private void newGame_Clicked(object sender, EventArgs e)
         {
             Reset();
+            chck = 0;
+            stps = 0;
         }
-
-        List<Label> lst = new List<Label>() { };
         private void Tap_Tapped(object sender, EventArgs e)
-
         {
-            check();
             Label stat = sender as Label;
-            if (chck % 2 == 0)
-            {
-                stat.Text = "X";
-                chck++;
-                lst.Add(stat);
-            }
-            else if (chck % 2 != 0)
-            {
-                chck++;
-                stat.Text = "0";
-                lst.Add(stat);
-            }
-            else if (stp == true)
-            {
-                DisplayAlert("Alert", "Yes", "Ok");
-            }
-        }
+            if (stat.Text == "")
 
-        string l = "X";
-        string h = "0";
-        bool stp;
-        void check()
-        {
-            foreach (Label stat in lst)
+                if (chck % 2 == 0)
+                {
+                    randomPlayer.Text = "Zero Move";
+                    stat.Text = l;
+                    chck++;
+                    stps++;
+                }
+                else if (chck % 2 != 0)
+                {
+                    randomPlayer.Text = "Cross Stroke";
+                    chck++;
+                    stps++;
+                    stat.Text = "0";
+                }
+
+            if (checkDraw() == true)
             {
-                if (lst.Contains(stat))
-                {
-                    stp = true;
-                }
-                else
-                {
-                    stp = false;
-                }
+                DisplayAlert("End Of The Game", "Draw", "New Game");
+                Reset();
+                stps = 0;
+            }
+
+            else if (checkWinnerY() == true)
+            {
+                DisplayAlert("End Of The Game", "Someone Won", "New Game");
+                Reset();
+            }
+            else if (checkWinnerX() == true)
+            {
+                DisplayAlert("End Of The Game", "Someone Won", "New Game");
+                Reset();
             }
         }
+        bool checkDraw()
+        {
+            if (stps == 9)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        bool checkWinnerX()
+        {
+            if (KresNoli[0, 0].Text == "X" && KresNoli[1, 0].Text == "X" && KresNoli[2, 0].Text == "X")
+            {
+                return true; ;
+            }
+            else if (KresNoli[0, 1].Text == "X" && KresNoli[1, 1].Text == "X" && KresNoli[2, 1].Text == "X")
+            {
+                return true;
+            }
+            else if (KresNoli[0, 2].Text == "X" && KresNoli[1, 2].Text == "X" && KresNoli[2, 2].Text == "X")
+            {
+                return true;
+            }
+            if (KresNoli[0, 0].Text == "0" && KresNoli[1, 0].Text == "0" && KresNoli[2, 0].Text == "0")
+            {
+                return true; ;
+            }
+            else if (KresNoli[0, 1].Text == "0" && KresNoli[1, 1].Text == "0" && KresNoli[2, 1].Text == "0")
+            {
+                return true;
+            }
+            else if (KresNoli[0, 2].Text == "0" && KresNoli[1, 2].Text == "0" && KresNoli[2, 2].Text == "0")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        bool checkWinnerY()
+        {
+            if (KresNoli[0, 0].Text == "X" && KresNoli[0, 1].Text == "X" && KresNoli[0, 2].Text == "X")
+            {
+                return true; ;
+            }
+            else if (KresNoli[1, 1].Text == "X" && KresNoli[1, 1].Text == "X" && KresNoli[1, 2].Text == "X")
+            {
+                return true;
+            }
+            else if (KresNoli[2, 0].Text == "X" && KresNoli[2, 1].Text == "X" && KresNoli[2, 2].Text == "X")
+            {
+                return true;
+            }
+            if (KresNoli[0, 0].Text == "0" && KresNoli[0, 1].Text == "0" && KresNoli[0, 2].Text == "0")
+            {
+                return true; ;
+            }
+            else if (KresNoli[1, 1].Text == "0" && KresNoli[1, 1].Text == "0" && KresNoli[1, 2].Text == "0")
+            {
+                return true;
+            }
+            else if (KresNoli[2, 0].Text == "0" && KresNoli[2, 1].Text == "X" && KresNoli[2, 2].Text == "0")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        int stps = 0;
 
         Random strt = new Random();
         int chck = 0;
-        private void RandomPlayer_Clicked(object sender, EventArgs e)
+        private void randomPlayer_Clicked(object sender, EventArgs e)
         {
             chck = strt.Next(0, 2);
+            if (chck % 2 == 0)
+            {
+                info.Text = "Cross Stroke";
+            }
+            else if (chck % 2 != 0)
+            {
+                info.Text = "Zero Move";
+            }
         }
     }
 }

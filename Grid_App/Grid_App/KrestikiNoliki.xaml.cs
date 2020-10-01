@@ -39,7 +39,9 @@ namespace Grid_App
                 BackgroundColor = Color.BurlyWood,
                 BorderWidth = 2,
                 BorderColor = Color.Gray,
-                Text = "Who's First?"
+                FontSize = 25,
+                Text = "Change Course",
+                TextColor = Color.White
             };
             randomPlayer.Clicked += randomPlayer_Clicked;
             newGame = new Button
@@ -47,14 +49,18 @@ namespace Grid_App
                 BackgroundColor = Color.BurlyWood,
                 BorderWidth = 2,
                 BorderColor = Color.Gray,
-                Text = "New Game"
+                FontSize = 25,
+                Text = "New Game",
+                TextColor = Color.White
             };
             newGame.Clicked += newGame_Clicked;
             info = new Label
             {
                 FontSize = 30,
                 TextColor = Color.Gray,
-                Text = ""
+                Text = "",
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center
             };
 
             for (int i = 0; i < 3; i++)
@@ -63,11 +69,11 @@ namespace Grid_App
                 {
                     stat = new Label
                     {
-                        BackgroundColor = Color.LightGray,
+                        BackgroundColor = Color.Gray,
                         FontSize = 120,
                         Text = "",
                         HorizontalTextAlignment = TextAlignment.Center,
-                        TextColor = Color.Gray,
+                        TextColor = Color.LightGray,
                         VerticalTextAlignment = TextAlignment.Center,
                     };
                     KresNoli[i, j] = stat;
@@ -96,14 +102,14 @@ namespace Grid_App
 
                 if (chck % 2 == 0)
                 {
-                    randomPlayer.Text = "Zero Move";
+                    info.Text = "Zero Move";
                     stat.Text = l;
                     chck++;
                     stps++;
                 }
                 else if (chck % 2 != 0)
                 {
-                    randomPlayer.Text = "Cross Stroke";
+                    info.Text = "Cross Stroke";
                     chck++;
                     stps++;
                     stat.Text = "0";
